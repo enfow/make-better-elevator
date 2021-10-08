@@ -1,0 +1,13 @@
+numpy == 1.21.2
+gym == 0.21.0
+
+# formatting
+black == 21.0b0
+isort == 5.9.3
+
+# linting
+pytest == 6.2.5
+pylint == 2.11.1
+mypy == 0.910
+pytest-pylint == 0.18.0
+pytest-mypy == 0.8.1
