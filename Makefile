@@ -3,7 +3,7 @@ format:
 	isort .
 
 lint:
-	pytest --pylint src/
+	pytest src/ --pylint --mypy
 
 utest:
-	pytest src/
+	PYTHONPATH=src/ pytest test/unittest
