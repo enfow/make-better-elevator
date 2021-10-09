@@ -7,9 +7,12 @@ References:
     - gym.Env: https://github.com/openai/gym/blob/master/gym/core.py
 """
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import gym
+
+Floor = int
+Direction = int  # -1: go down, 1: go up
 
 
 class ElevatorEnv(gym.Env):
@@ -24,10 +27,12 @@ class ElevatorEnv(gym.Env):
         self.floors: List[int] = [
             i for i in range(floor_range[0], floor_range[1] + 1, 1) if i != 0
         ]
-        # number of passegeners waiting for the elevator 
-        self.floor_to_passengers: Dict[int, int] = {floor: 0 for floor in self.floors}
+        # number of passegeners waiting for the elevator
+        self.floor_to_passengers: Dict[Floor, Dict[Direction, Set["Passenger"]]] = {
+            floor: self.get_empty_floor() for floor in self.floors
+        }
         # number of people on each floor
-        self.floor_to_people: Dict[int, int] = {floor: 0 for floor in self.floors}
+        self.floor_to_people: Dict[Floor, int] = {floor: 0 for floor in self.floors}
 
         self.reset()
 
@@ -44,12 +49,18 @@ class ElevatorEnv(gym.Env):
             - the number of passanger is 0.
             - all of the elevators are located on the first floor.
         """
-        self.floor_to_passengers = {floor: 0 for floor in self.floors}
+        self.floor_to_passengers = {
+            floor: self.get_empty_floor() for floor in self.floors
+        }
         self.floor_to_people = {floor: 0 for floor in self.floors}
 
     def render(self, mode="human") -> None:
         """render."""
         raise NotImplementedError
+
+    def get_empty_floor(self) -> Dict[Direction, Set["Passenger"]]:
+        """Get empty floor."""
+        return {1: set(), -1: set()}
 
 
 class Passenger:
