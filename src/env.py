@@ -7,7 +7,7 @@ References:
     - gym.Env: https://github.com/openai/gym/blob/master/gym/core.py
 """
 
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import gym
 
@@ -25,11 +25,27 @@ class ElevatorEnv(gym.Env):
             i for i in range(floor_range[0], floor_range[1] + 1, 1) if i != 0
         ]
 
+        self.floor_to_passangers: Dict[int, int] = {floor: 0 for floor in self.floors}
+        self.floor_to_people: Dict[int, int] = {floor: 0 for floor in self.floors}
+
+        self.reset()
+
     def step(self, action) -> None:
-        pass
+        """step.
+        Notes:
+            - action: target floor for each elevator.
+        """
+        raise NotImplementedError
 
     def reset(self) -> None:
-        pass
+        """reset the env.
+        Notes:
+            - the number of passanger is 0.
+            - all of the elevators are located on the first floor.
+        """
+        self.floor_to_passangers = {floor: 0 for floor in self.floors}
+        self.floor_to_people = {floor: 0 for floor in self.floors}
 
     def render(self, mode="human") -> None:
-        pass
+        """render."""
+        raise NotImplementedError
