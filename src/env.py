@@ -24,8 +24,9 @@ class ElevatorEnv(gym.Env):
         self.floors: List[int] = [
             i for i in range(floor_range[0], floor_range[1] + 1, 1) if i != 0
         ]
-
-        self.floor_to_passangers: Dict[int, int] = {floor: 0 for floor in self.floors}
+        # number of passegeners waiting for the elevator 
+        self.floor_to_passengers: Dict[int, int] = {floor: 0 for floor in self.floors}
+        # number of people on each floor
         self.floor_to_people: Dict[int, int] = {floor: 0 for floor in self.floors}
 
         self.reset()
@@ -43,9 +44,16 @@ class ElevatorEnv(gym.Env):
             - the number of passanger is 0.
             - all of the elevators are located on the first floor.
         """
-        self.floor_to_passangers = {floor: 0 for floor in self.floors}
+        self.floor_to_passengers = {floor: 0 for floor in self.floors}
         self.floor_to_people = {floor: 0 for floor in self.floors}
 
     def render(self, mode="human") -> None:
         """render."""
         raise NotImplementedError
+
+
+class Passenger:
+    """Passenger."""
+
+    def __init__(self, target: int) -> None:
+        self.target = target

@@ -6,7 +6,7 @@ Email: wgm0601@gmail.com
 
 import pytest
 
-from env import ElevatorEnv
+from env import ElevatorEnv, Passenger
 
 
 class TestElevatorEnvClass:
@@ -25,7 +25,14 @@ class TestElevatorEnvClass:
     def test_initial_passangers(self) -> None:
         """Check the env has correct info about the passangers at init time."""
         for floor in self.env.floors:
-            assert floor in self.env.floor_to_passangers
+            assert floor in self.env.floor_to_passengers
             assert floor in self.env.floor_to_people
-            assert self.env.floor_to_passangers[floor] == 0
+            assert self.env.floor_to_passengers[floor] == 0
             assert self.env.floor_to_people[floor] == 0
+
+
+class TestPassenger:
+    def test_passenger(self) -> None:
+        passenger = Passenger(target=10)
+        assert passenger.target == 10
+        
