@@ -4,3 +4,6 @@ format:
 
 lint:
 	pytest --pylint src/
+
+utest:
+	pytest src/
