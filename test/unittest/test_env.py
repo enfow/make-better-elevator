@@ -36,23 +36,40 @@ class TestElevatorEnvClass:
             assert len(self.env.floor_to_passengers[floor][-1]) == 0
             assert len(self.env.floor_to_passengers[floor][1]) == 0
 
+    def test_generate_passenger_method(self) -> None:
+        """Check the env generate valid passenger."""
+        self.env.generate_passenger()
+        # reduce people (all poeple are located on the base floor at init.)
+        assert self.env.floor_to_people[self.env.base_floor] == self.env.max_people - 1
+        # add passenger to base floor (direction of the new passenger is random)
+        assert (
+            len(self.env.floor_to_passengers[self.env.base_floor][1])
+            + len(self.env.floor_to_passengers[self.env.base_floor][-1])
+            == 1
+        )
+
 
 class TestPassenger:
-    def test_passenger(self) -> None:
-        passenger = Passenger(target=10)
-        assert passenger.target == 10
+    def setup_class(self) -> None:
+        self.floors = [-1, 1, 2, 3]
 
-    def test_get_direction_method(self) -> None:
+    def test_init_passenger(self) -> None:
+        """Check Passenger's initialization."""
+        passenger = Passenger(begin_floor=1, floors=self.floors)
+        assert passenger.begin_floor == 1
+
+    def test_direction_property(self) -> None:
+        """Check Passenger's direction property."""
         # from 1 to 10 -> Going Up
-        passenger = Passenger(target=10)
-        current_floor = 1
-        assert passenger.get_direction(current_floor) == 1
+        passenger = Passenger(begin_floor=1, floors=self.floors)
+        passenger.target_floor = 10
+        assert passenger.direction == 1
         # from 10 to 1 -> Going Down
-        passenger = Passenger(target=1)
-        current_floor = 10
-        assert passenger.get_direction(current_floor) == -1
+        passenger = Passenger(begin_floor=10, floors=self.floors)
+        passenger.target_floor = 1
+        assert passenger.direction == -1
         # from 1 to 1 -> Raise RuntimeError
-        passenger = Passenger(target=1)
-        current_floor = 1
+        passenger = Passenger(begin_floor=1, floors=self.floors)
+        passenger.target_floor = 1
         with pytest.raises(RuntimeError):
-            passenger.get_direction(current_floor)
+            passenger.direction

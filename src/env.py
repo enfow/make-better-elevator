@@ -7,6 +7,7 @@ References:
     - gym.Env: https://github.com/openai/gym/blob/master/gym/core.py
 """
 
+import random
 from typing import Dict, List, Set, Tuple
 
 import gym
@@ -68,20 +69,42 @@ class ElevatorEnv(gym.Env):
 
     def generate_passenger(self) -> None:
         """Generate new passenger."""
+        not_empty_floors = set()
+        for floor, people in self.floor_to_people.items():
+            if people > 0:
+                not_empty_floors.add(floor)
+        current_floor = random.sample(not_empty_floors, k=1)[0]
+        # reduce current floor's number of people
+        self.floor_to_people[current_floor] -= 1
+        # create new pessenger
+        new_passenger = Passenger(begin_floor=current_floor, floors=self.floors)
+        self.floor_to_passengers[current_floor][new_passenger.direction].add(
+            new_passenger
+        )
 
 
 class Passenger:
     """Passenger."""
 
-    def __init__(self, target: int) -> None:
+    def __init__(self, begin_floor: int, floors: List[int]) -> None:
         """Initialize."""
-        self.target = target
+        self.begin_floor: Floor = begin_floor
+        self.target_floor: Floor = self.get_target_floor(floors)
 
-    def get_direction(self, floor: Floor) -> Direction:
+    def get_target_floor(self, floors: List[int]) -> Floor:
+        """Get target floor."""
+        while 1:
+            target_floor = random.sample(floors, k=1)[0]
+            if target_floor != self.begin_floor:
+                break
+        return target_floor
+
+    @property
+    def direction(self) -> Direction:
         """Get direction of the passenger."""
-        if floor < self.target:
+        if self.begin_floor < self.target_floor:
             return 1
-        if floor > self.target:
+        if self.begin_floor > self.target_floor:
             return -1
         raise RuntimeError(
             "Passenger's current floor and target floor should be different."
