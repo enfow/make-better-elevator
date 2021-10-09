@@ -67,4 +67,15 @@ class Passenger:
     """Passenger."""
 
     def __init__(self, target: int) -> None:
+        """Initialize."""
         self.target = target
+
+    def get_direction(self, floor: Floor) -> Direction:
+        """Get direction of the passenger."""
+        if floor < self.target:
+            return 1
+        if floor > self.target:
+            return -1
+        raise RuntimeError(
+            "Passenger's current floor and target floor should be different."
+        )

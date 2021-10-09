@@ -36,3 +36,18 @@ class TestPassenger:
     def test_passenger(self) -> None:
         passenger = Passenger(target=10)
         assert passenger.target == 10
+
+    def test_get_direction_method(self) -> None:
+        # from 1 to 10 -> Going Up
+        passenger = Passenger(target=10)
+        current_floor = 1
+        assert passenger.get_direction(current_floor) == 1
+        # from 10 to 1 -> Going Down
+        passenger = Passenger(target=1)
+        current_floor = 10
+        assert passenger.get_direction(current_floor) == -1
+        # from 1 to 1 -> Raise RuntimeError
+        passenger = Passenger(target=1)
+        current_floor = 1
+        with pytest.raises(RuntimeError):
+            passenger.get_direction(current_floor)
