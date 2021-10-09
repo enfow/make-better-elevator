@@ -25,11 +25,16 @@ class TestElevatorEnvClass:
     def test_initial_passangers(self) -> None:
         """Check the env has correct info about the passangers at init time."""
         for floor in self.env.floors:
-            assert floor in self.env.floor_to_passengers
             assert floor in self.env.floor_to_people
+            if floor == self.env.base_floor:
+                assert self.env.floor_to_people[floor] == self.env.max_people
+            else:
+                assert self.env.floor_to_people[floor] == 0
+
+        for floor in self.env.floors:
+            assert floor in self.env.floor_to_passengers
             assert len(self.env.floor_to_passengers[floor][-1]) == 0
             assert len(self.env.floor_to_passengers[floor][1]) == 0
-            assert self.env.floor_to_people[floor] == 0
 
 
 class TestPassenger:

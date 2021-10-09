@@ -21,9 +21,12 @@ class ElevatorEnv(gym.Env):
     def __init__(
         self,
         floor_range: Tuple[int, int],
+        max_people: int = 100,
     ) -> None:
 
         self.base_floor = 1
+        self.max_people = max_people
+
         self.floors: List[int] = [
             i for i in range(floor_range[0], floor_range[1] + 1, 1) if i != 0
         ]
@@ -53,6 +56,7 @@ class ElevatorEnv(gym.Env):
             floor: self.get_empty_floor() for floor in self.floors
         }
         self.floor_to_people = {floor: 0 for floor in self.floors}
+        self.floor_to_people[1] = self.max_people
 
     def render(self, mode="human") -> None:
         """render."""
@@ -61,6 +65,9 @@ class ElevatorEnv(gym.Env):
     def get_empty_floor(self) -> Dict[Direction, Set["Passenger"]]:
         """Get empty floor."""
         return {1: set(), -1: set()}
+
+    def generate_passenger(self) -> None:
+        """Generate new passenger."""
 
 
 class Passenger:
