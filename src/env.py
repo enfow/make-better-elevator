@@ -15,6 +15,8 @@ import gym
 Floor = int
 Direction = int  # -1: go down, 1: go up
 
+BASE_FLOOR = 1
+
 
 class ElevatorEnv(gym.Env):
     """Elevator gym environment."""
@@ -26,7 +28,6 @@ class ElevatorEnv(gym.Env):
         num_elevator: int = 1,
     ) -> None:
 
-        self.base_floor = 1
         self.max_people = max_people
         self.num_elevator = num_elevator
 
@@ -93,18 +94,22 @@ class Elevator:
         self.target_to_passengers: Dict[Floor, Set["Passenger"]] = {
             floor: set() for floor in floors
         }
-
-    def update_location(self) -> None:
-        """Update current location of the elevator."""
-        raise NotImplementedError
+        self.current_floor = BASE_FLOOR
 
     def get_on(self, passengers: Set["Passenger"]):
         """Get on the elevator."""
-        raise NotImplementedError
+        for passenger in passengers:
+            self.target_to_passengers[passenger.target_floor].add(passenger)
 
-    def get_off(self, passengers: Set["Passenger"]):
-        """Get off the elevator."""
-        raise NotImplementedError
+    def get_off(self) -> int:
+        """Get off the elevator.
+        
+        Returns:
+            (int) number of passengers getting off.
+        """
+        num_passengers = len(self.target_to_passengers[self.current_floor])
+        self.target_to_passengers[self.current_floor].clear()
+        return num_passengers
 
 
 class Passenger:
