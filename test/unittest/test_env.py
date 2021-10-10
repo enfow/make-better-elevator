@@ -6,7 +6,7 @@ Email: wgm0601@gmail.com
 
 import pytest
 
-from env import Elevator, ElevatorEnv, Passenger, BASE_FLOOR
+from env import BASE_FLOOR, Elevator, ElevatorEnv, Passenger
 
 
 class TestElevatorEnvClass:
@@ -65,7 +65,10 @@ class TestElevator:
         n_passengers = 3
         current_floor, target_floor = 1, 3
         # create passengers getting on the elevator on the first floor
-        passengers = [Passenger(begin_floor=current_floor, floors=self.floors) for _ in range(n_passengers)]
+        passengers = [
+            Passenger(begin_floor=current_floor, floors=self.floors)
+            for _ in range(n_passengers)
+        ]
         # set all passengers target floor as 3
         for passenger in passengers:
             passenger.target_floor = target_floor
@@ -78,6 +81,7 @@ class TestElevator:
         num_passengers_getting_off = self.elevator.get_off()
         assert len(self.elevator.target_to_passengers[target_floor]) == 0
         assert num_passengers_getting_off == n_passengers
+
 
 class TestPassenger:
     def setup_class(self) -> None:

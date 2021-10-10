@@ -103,7 +103,7 @@ class Elevator:
 
     def get_off(self) -> int:
         """Get off the elevator.
-        
+
         Returns:
             (int) number of passengers getting off.
         """
