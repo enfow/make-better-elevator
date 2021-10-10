@@ -23,10 +23,12 @@ class ElevatorEnv(gym.Env):
         self,
         floor_range: Tuple[int, int],
         max_people: int = 100,
+        num_elevator: int = 1,
     ) -> None:
 
         self.base_floor = 1
         self.max_people = max_people
+        self.num_elevator = num_elevator
 
         self.floors: List[int] = [
             i for i in range(floor_range[0], floor_range[1] + 1, 1) if i != 0
@@ -76,22 +78,44 @@ class ElevatorEnv(gym.Env):
         current_floor = random.sample(not_empty_floors, k=1)[0]
         # reduce current floor's number of people
         self.floor_to_people[current_floor] -= 1
-        # create new pessenger
+        # create and append new pessenger
         new_passenger = Passenger(begin_floor=current_floor, floors=self.floors)
         self.floor_to_passengers[current_floor][new_passenger.direction].add(
             new_passenger
         )
 
 
+class Elevator:
+    """Elevator."""
+
+    def __init__(self, floors: List[Floor]) -> None:
+        """Initialize."""
+        self.target_to_passengers: Dict[Floor, Set["Passenger"]] = {
+            floor: set() for floor in floors
+        }
+
+    def update_location(self) -> None:
+        """Update current location of the elevator."""
+        raise NotImplementedError
+
+    def get_on(self, passengers: Set["Passenger"]):
+        """Get on the elevator."""
+        raise NotImplementedError
+
+    def get_off(self, passengers: Set["Passenger"]):
+        """Get off the elevator."""
+        raise NotImplementedError
+
+
 class Passenger:
     """Passenger."""
 
-    def __init__(self, begin_floor: int, floors: List[int]) -> None:
+    def __init__(self, begin_floor: Floor, floors: List[Floor]) -> None:
         """Initialize."""
         self.begin_floor: Floor = begin_floor
         self.target_floor: Floor = self.get_target_floor(floors)
 
-    def get_target_floor(self, floors: List[int]) -> Floor:
+    def get_target_floor(self, floors: List[Floor]) -> Floor:
         """Get target floor."""
         target_floor = random.sample(
             [floor for floor in floors if floor != self.begin_floor], k=1

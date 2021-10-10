@@ -6,7 +6,7 @@ Email: wgm0601@gmail.com
 
 import pytest
 
-from env import ElevatorEnv, Passenger
+from env import Elevator, ElevatorEnv, Passenger
 
 
 class TestElevatorEnvClass:
@@ -47,6 +47,18 @@ class TestElevatorEnvClass:
             + len(self.env.floor_to_passengers[self.env.base_floor][-1])
             == 1
         )
+
+
+class TestElevator:
+    def setup_method(self) -> None:
+        self.floors = [-3, -2, -1, 1, 2, 3, 4, 5]
+        self.elevator = Elevator(self.floors)
+
+    def test_init_elevator(self) -> None:
+        """Chech the elevlator's Initialization."""
+        for floor in self.floors:
+            assert len(self.elevator.target_to_passengers[floor]) == 0
+        assert 0 not in self.elevator.target_to_passengers
 
 
 class TestPassenger:
