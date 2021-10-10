@@ -93,7 +93,9 @@ class Passenger:
 
     def get_target_floor(self, floors: List[int]) -> Floor:
         """Get target floor."""
-        target_floor = random.sample([floor for floor in floors if floor != self.begin_floor], k=1)[0]
+        target_floor = random.sample(
+            [floor for floor in floors if floor != self.begin_floor], k=1
+        )[0]
         return target_floor
 
     @property
