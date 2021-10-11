@@ -32,7 +32,7 @@ class ElevatorEnv(gym.Env):
         self.max_people = max_people
         self.num_elevator = num_elevator
 
-        self.floors: List[int] = [
+        self.floors: List[Floor] = [
             i for i in range(floor_range[0], floor_range[1] + 1, 1) if i != 0
         ]
         # number of passegeners waiting for the elevator
@@ -102,9 +102,9 @@ class Elevator:
         }
         self.current_floor: Floor = BASE_FLOOR
         self.target_floor: Floor = BASE_FLOOR
-        self.velocity: float = 0.
+        self.velocity: float = 0.0
 
-        self.valid_velocity: Set[float] = {-1., -0.5, 0., 0.5, 1.}
+        self.valid_velocity: Set[float] = {-1.0, -0.5, 0.0, 0.5, 1.0}
 
     def step(self) -> None:
         """Do the elevator thing."""
@@ -112,7 +112,7 @@ class Elevator:
 
     def update_current_state(self) -> None:
         """Get the location and the movement of the elevator.
-        
+
         Notes:
             - the speed of the elevator is 1 except the start and finish step(0.5).
             - e.g. the movement of the elevator when it go from 1 to 4:
@@ -121,13 +121,13 @@ class Elevator:
         # when it should go up.
         if self.current_floor < self.target_floor:
             # when it is not max.
-            if self.velocity != 1.:
+            if self.velocity != 1.0:
                 self.velocity += 0.5
             self.current_floor += self.velocity
         # when it should go down
         elif self.current_floor > self.target_floor:
             # when it is not max.
-            if self.velocity != -1.:
+            if self.velocity != -1.0:
                 self.velocity -= 0.5
             self.current_floor += self.velocity
         # check validity
