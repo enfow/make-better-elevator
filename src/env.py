@@ -12,8 +12,9 @@ from typing import Dict, List, Set, Tuple
 
 import gym
 
-Floor = int
+Floor = float
 Direction = int  # -1: go down, 1: go up
+Velocity = float  # velocity of the elevator
 
 BASE_FLOOR = 1
 
@@ -91,17 +92,54 @@ class Elevator:
 
     def __init__(self, floors: List[Floor]) -> None:
         """Initialize."""
-        self.target_to_passengers: Dict[Floor, Set["Passenger"]] = {
-            floor: set() for floor in floors
-        }
-        self.current_floor = BASE_FLOOR
+        self.floors = floors
+        self.reset()
 
-    def get_on(self, passengers: Set["Passenger"]):
+    def reset(self) -> None:
+        """Reset the elevator."""
+        self.target_to_passengers: Dict[Floor, Set["Passenger"]] = {
+            floor: set() for floor in self.floors
+        }
+        self.current_floor: Floor = BASE_FLOOR
+        self.target_floor: Floor = BASE_FLOOR
+        self.velocity: float = 0.
+
+        self.valid_velocity: Set[float] = {-1., -0.5, 0., 0.5, 1.}
+
+    def step(self) -> None:
+        """Do the elevator thing."""
+        raise NotImplementedError
+
+    def update_current_state(self) -> None:
+        """Get the location and the movement of the elevator.
+        
+        Notes:
+            - the speed of the elevator is 1 except the start and finish step(0.5).
+            - e.g. the movement of the elevator when it go from 1 to 4:
+                1 -> 1.5 -> 2.5 -> 3.5 -> 4
+        """
+        # when it should go up.
+        if self.current_floor < self.target_floor:
+            # when it is not max.
+            if self.velocity != 1.:
+                self.velocity += 0.5
+            self.current_floor += self.velocity
+        # when it should go down
+        elif self.current_floor > self.target_floor:
+            # when it is not max.
+            if self.velocity != -1.:
+                self.velocity -= 0.5
+            self.current_floor += self.velocity
+        # check validity
+        if self.velocity not in self.valid_velocity:
+            raise RuntimeError("Invalid velocity")
+
+    def get_on_elevator(self, passengers: Set["Passenger"]) -> None:
         """Get on the elevator."""
         for passenger in passengers:
             self.target_to_passengers[passenger.target_floor].add(passenger)
 
-    def get_off(self) -> int:
+    def get_off_elevator(self) -> int:
         """Get off the elevator.
 
         Returns:
