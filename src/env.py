@@ -93,18 +93,23 @@ class Elevator:
     def __init__(self, floors: List[Floor]) -> None:
         """Initialize."""
         self.floors = floors
-        self.reset()
-
-    def reset(self) -> None:
-        """Reset the elevator."""
         self.target_to_passengers: Dict[Floor, Set["Passenger"]] = {
             floor: set() for floor in self.floors
         }
         self.current_floor: Floor = BASE_FLOOR
         self.target_floor: Floor = BASE_FLOOR
-        self.velocity: float = 0.0
+        self.velocity: Velocity = 0.0
+
+        self.reset()
 
         self.valid_velocity: Set[float] = {-1.0, -0.5, 0.0, 0.5, 1.0}
+
+    def reset(self) -> None:
+        """Reset the elevator."""
+        self.target_to_passengers = {floor: set() for floor in self.floors}
+        self.current_floor = BASE_FLOOR
+        self.target_floor = BASE_FLOOR
+        self.velocity = 0.0
 
     def step(self) -> None:
         """Do the elevator thing."""
@@ -133,6 +138,18 @@ class Elevator:
         # check validity
         if self.velocity not in self.valid_velocity:
             raise RuntimeError("Invalid velocity")
+
+    def update_target_floor(self, new_target: Floor) -> None:
+        """Update target floor.
+
+        Notes:
+            - To change the target_floor, it should be far enough from the current
+            elevator location(more than current velocity + 0.5).
+            - e.g. if current velocity is 1. at third floor, target can be changed
+            as 5, but it can not be changed as 4.
+        """
+        if new_target > self.current_floor + self.velocity + 0.5:
+            self.target_floor = new_target
 
     def get_on_elevator(self, passengers: Set["Passenger"]) -> None:
         """Get on the elevator."""

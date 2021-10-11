@@ -143,6 +143,26 @@ class TestElevator:
         assert self.elevator.target_floor == 1.0  # same
         assert self.elevator.velocity == -0.5  # same
 
+    # update target floor: Elevator.update_target_floor()
+    def test_update_target_floor_from4_to2_with_velocity0(self) -> None:
+        """Check update_target_floor method."""
+        self.elevator.target_floor = 4.0
+        self.elevator.velocity = 0.0
+
+        self.elevator.update_target_floor(new_target=2.0)
+
+        assert self.elevator.target_floor == 2.0  # update from 4 to 2
+
+    def test_update_target_floor_from4_to2_with_velocity1(self) -> None:
+        """Check update_target_floor method."""
+        self.elevator.target_floor = 4.0
+        self.elevator.velocity = 1.0
+
+        self.elevator.update_target_floor(new_target=2.0)
+
+        assert self.elevator.target_floor == 4.0  # no update
+
+    # update passengers : Elevator.get_on_elevator() and Elevator.get_off_elevator()
     def test_get_on_and_off_method(self) -> None:
         """Check the situation of passengers getting on the elevator."""
         n_passengers = 3
