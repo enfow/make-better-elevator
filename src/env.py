@@ -29,6 +29,8 @@ class ElevatorEnv(gym.Env):
         num_elevator: int = 1,
     ) -> None:
 
+        assert max_people >= 1
+        assert num_elevator >= 1
         self.max_people = max_people
         self.num_elevator = num_elevator
 
@@ -41,6 +43,10 @@ class ElevatorEnv(gym.Env):
         }
         # number of people on each floor
         self.floor_to_people: Dict[Floor, int] = {floor: 0 for floor in self.floors}
+        # init elevator
+        self.elevators: List["Elevator"] = [
+            Elevator(self.floors) for _ in range(self.num_elevator)
+        ]
 
         self.reset()
 
@@ -57,11 +63,14 @@ class ElevatorEnv(gym.Env):
             - the number of passanger is 0.
             - all of the elevators are located on the first floor.
         """
-        self.floor_to_passengers = {
-            floor: self.get_empty_floor() for floor in self.floors
-        }
-        self.floor_to_people = {floor: 0 for floor in self.floors}
+        # reset floor informations
+        for floor in self.floors:
+            self.floor_to_passengers[floor] = self.get_empty_floor()
+            self.floor_to_people[floor] = 0
         self.floor_to_people[1] = self.max_people
+        # reset elevators
+        for elevator in self.elevators:
+            elevator.reset()
 
     def render(self, mode="human") -> None:
         """render."""
@@ -102,7 +111,7 @@ class Elevator:
 
         self.reset()
 
-        self.valid_velocity: Set[float] = {-1.0, -0.5, 0.0, 0.5, 1.0}
+        self.valid_velocity: Set[Velocity] = {-1.0, -0.5, 0.0, 0.5, 1.0}
 
     def reset(self) -> None:
         """Reset the elevator."""

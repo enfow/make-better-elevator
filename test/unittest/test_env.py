@@ -13,7 +13,11 @@ class TestElevatorEnvClass:
     def setup_method(self) -> None:
         self.lowest_floor = -10
         self.highest_floor = 10
-        self.env = ElevatorEnv(floor_range=(self.lowest_floor, self.highest_floor))
+        self.num_elevator = 2
+        self.env = ElevatorEnv(
+            floor_range=(self.lowest_floor, self.highest_floor),
+            num_elevator=self.num_elevator,
+        )
 
     def test_make_valid_floors(self) -> None:
         """Check the env has valid floor information."""
@@ -35,6 +39,10 @@ class TestElevatorEnvClass:
             assert floor in self.env.floor_to_passengers
             assert len(self.env.floor_to_passengers[floor][-1]) == 0
             assert len(self.env.floor_to_passengers[floor][1]) == 0
+
+    def test_initial_elevators(self) -> None:
+        """Check the env has valid elevator information."""
+        assert len(self.env.elevators) == self.num_elevator
 
     def test_generate_passenger_method(self) -> None:
         """Check the env generate valid passenger."""
