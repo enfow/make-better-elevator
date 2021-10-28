@@ -2,7 +2,7 @@ numpy == 1.21.2
 gym == 0.21.0
 
 # formatting
-black == 21.0b0
+black == 21.9b0
 isort == 5.9.3
 
 # linting
