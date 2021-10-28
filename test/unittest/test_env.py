@@ -6,7 +6,8 @@ Email: wgm0601@gmail.com
 
 import pytest
 
-from env import BASE_FLOOR, Elevator, ElevatorEnv, Passenger
+from env import (BASE_FLOOR, Direction, Elevator, ElevatorEnv, Floor,
+                 Passenger, Velocity)
 
 
 class TestElevatorEnvClass:
@@ -55,6 +56,56 @@ class TestElevatorEnvClass:
             + len(self.env.floor_to_passengers[BASE_FLOOR][-1])
             == 1
         )
+
+    # check step method
+    def test_update_elevator_target_floor(self) -> None:
+        """Check the target floor of the elevator is updated with action."""
+        # set target floor of all elevators as 1
+        initial_floor = 1
+        for i in range(self.num_elevator):
+            self.env.elevators[i].target_floor = initial_floor
+        # set all zero action without first one.
+        action: List[Floor] = [0 for _ in range(self.num_elevator)]
+        action[0] = self.highest_floor
+        # task a step
+        self.env.step(action)
+
+        # check
+        for i in range(1, self.num_elevator):
+            assert self.env.elevators[i].target_floor == initial_floor
+        assert self.env.elevators[0].target_floor == self.highest_floor
+
+    def test_elevator_goes_up(self) -> None:
+        """Check the elevator goes up with highest target floor"""
+        # stop all elevators at BASE_FLOOR
+        for i in range(self.num_elevator):
+            self.env.elevators[i].current_floor = BASE_FLOOR
+            self.env.elevators[i].velocity = 0.0
+        # set action with all highest floor
+        action: List[Floor] = [self.highest_floor for _ in range(self.num_elevator)]
+        # take a step
+        self.env.step(action)
+
+        # check
+        for i in range(self.num_elevator):
+            self.env.elevators[i].current_floor = BASE_FLOOR + 0.5
+            self.env.elevators[i].velocity = 0.5
+
+    def test_elevator_goes_down(self) -> None:
+        """Check the elevator goes down with lowest target floor"""
+        # stop all elevators at BASE_FLOOR
+        for i in range(self.num_elevator):
+            self.env.elevators[i].current_floor = BASE_FLOOR
+            self.env.elevators[i].velocity = 0.0
+        # set action with all highest floor
+        action: List[Floor] = [self.lowest_floor for _ in range(self.num_elevator)]
+        # take a step
+        self.env.step(action)
+
+        # check
+        for i in range(self.num_elevator):
+            self.env.elevators[i].current_floor = BASE_FLOOR - 0.5
+            self.env.elevators[i].velocity = -0.5
 
 
 class TestElevator:

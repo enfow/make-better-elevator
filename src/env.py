@@ -11,6 +11,7 @@ import random
 from typing import Dict, List, Set, Tuple
 
 import gym
+import numpy as np
 
 Floor = float
 Direction = int  # -1: go down, 1: go up
@@ -50,12 +51,17 @@ class ElevatorEnv(gym.Env):
 
         self.reset()
 
-    def step(self, action) -> None:
+    def step(self, action: np.ndarray) -> None:
         """step.
         Notes:
-            - action: target floor for each elevator.
+            - action: target floors for each elevator.
+            - if the action is 0, then the target floor does not changed.
+            - so the action space is "number of floors" + 1(for 0)
         """
-        raise NotImplementedError
+        assert len(action) == self.num_elevator
+
+        for idx, action_for_each_elevator in enumerate(action):
+            self.elevators[idx].step(action_for_each_elevator)
 
     def reset(self) -> None:
         """reset the env.
@@ -120,9 +126,11 @@ class Elevator:
         self.target_floor = BASE_FLOOR
         self.velocity = 0.0
 
-    def step(self) -> None:
+    def step(self, action: int) -> None:
         """Do the elevator thing."""
-        raise NotImplementedError
+        if action != 0:
+            self.target_floor = action
+        self.update_current_state()
 
     def update_current_state(self) -> None:
         """Get the location and the movement of the elevator.
