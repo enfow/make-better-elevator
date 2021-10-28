@@ -6,7 +6,8 @@ Email: wgm0601@gmail.com
 
 import pytest
 
-from env import BASE_FLOOR, Elevator, ElevatorEnv, Passenger, Floor, Direction, Velocity
+from env import (BASE_FLOOR, Direction, Elevator, ElevatorEnv, Floor,
+                 Passenger, Velocity)
 
 
 class TestElevatorEnvClass:
@@ -68,7 +69,7 @@ class TestElevatorEnvClass:
         action[0] = self.highest_floor
         # task a step
         self.env.step(action)
-        
+
         # check
         for i in range(1, self.num_elevator):
             assert self.env.elevators[i].target_floor == initial_floor
