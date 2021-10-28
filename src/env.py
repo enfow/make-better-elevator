@@ -53,9 +53,17 @@ class ElevatorEnv(gym.Env):
     def step(self, action) -> None:
         """step.
         Notes:
-            - action: target floor for each elevator.
+            - action: target floors for each elevator.
+            - if the action is 0, then the target floor does not changed.
+            - so the action space is "number of floors" + 1(for 0)
         """
-        raise NotImplementedError
+        assert len(action) == self.num_elevator
+
+        for i in range(self.num_elevator):
+            if action[i] != 0:
+                self.elevators[i].target_floor = action[i]
+            self.elevators[i].update_current_state()
+
 
     def reset(self) -> None:
         """reset the env.
